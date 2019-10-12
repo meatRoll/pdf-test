@@ -1,0 +1,17 @@
+{
+  "name": "pdftest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "html-to-pdfmake": "^1.1.1",
+    "html2pdf": "^0.0.11",
+    "jspdf": "^1.5.3",
+    "pdfmake": "^0.1.60"
+  }
+}
