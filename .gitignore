@@ -1,2 +1,3 @@
-chrome-win/**/*
+temp/**/*
 node_modules
+yarn-error.log
