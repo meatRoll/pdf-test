@@ -2,8 +2,6 @@ const fs = require('fs')
 const path = require('path')
 const open = require('open')
 
-const results = []
-
 const checkToRun = dirPath => new Promise((resolve, reject) => {
   fs.stat(dirPath, (e, stats) => {
     if (e) {
@@ -98,6 +96,7 @@ fs.readdir(__dirname, async (e, files) => {
     return
   }
   try {
+    const results = []
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
       const dirPath = path.resolve(__dirname, file)
