@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const open = require('open')
 const chalk = require('chalk')
+const empty = require('empty-folder')
 
 const {times} = require('./configs.json')
 
@@ -97,6 +98,8 @@ fs.readdir(__dirname, async (e, files) => {
     const tempDirPath = path.resolve(__dirname, '../temp')
     if (!fs.existsSync(tempDirPath)) {
       await mkdir(tempDirPath)
+    } else {
+      empty(path.join(__dirname, '../temp'), false, ({error}) => (console.error(error)))
     }
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
