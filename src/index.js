@@ -11,6 +11,8 @@ const run = async () => {
   console.log(chalk.hex('#90a906')('--------------------------------------------------------------------'))
   console.log(`${chalk.hex('#90a906')('----------------------------')} ${chalk.bold.bgYellowBright.gray(' PDF TEST ')} ${chalk.hex('#90a906')('----------------------------')}`)
   console.log(chalk.hex('#90a906')('--------------------------------------------------------------------'))
+  console.log('')
+  console.log(`Testing Times Each Plugin: ${chalk.bold.cyan(times)}.`)
   const start = new Date()
   try {
     const files = await readDir(__dirname)
