@@ -13,8 +13,7 @@ const checkToRun = dirPath => new Promise((resolve, reject) => {
       return
     }
     const indexFilePath = path.resolve(dirPath, 'index.js')
-    const isFileExists = fs.existsSync(indexFilePath)
-    if (isFileExists) resolve(indexFilePath)
+    if (fs.existsSync(indexFilePath)) resolve(indexFilePath)
     else resolve()
   })
 })
@@ -27,17 +26,7 @@ const mkdir = dirPath => new Promise((resolve, reject) => {
 })
 
 const writeFile = content => new Promise(async (resolve, reject) => {
-  const dirPath = path.resolve(__dirname, '../temp')
-  const isDirExists = fs.existsSync(dirPath)
-  if (!isDirExists) {
-    try {
-      await mkdir(dirPath)
-    } catch (e) {
-      reject(e)
-      return
-    }
-  }
-  const filePath = path.resolve(dirPath, 'report.html')
+  const filePath = path.resolve(__dirname, '../temp/report.html')
   fs.writeFile(filePath, content, e => {
     if (e) reject(e)
     resolve(filePath)
@@ -97,6 +86,10 @@ fs.readdir(__dirname, async (e, files) => {
   }
   try {
     const results = []
+    const tempDirPath = path.resolve(__dirname, '../temp')
+    if (!fs.existsSync(tempDirPath)) {
+      await mkdir(tempDirPath)
+    }
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
       const dirPath = path.resolve(__dirname, file)
@@ -106,7 +99,7 @@ fs.readdir(__dirname, async (e, files) => {
         const {getResult} = require(filePath) 
         if (getResult) {
           const result = await getResult() /* title, time */
-          results.push(result)
+          if (result) results.push(result)
         }
       }
     }
