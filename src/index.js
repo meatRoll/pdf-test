@@ -1,6 +1,13 @@
 const fs = require('fs')
 const path = require('path')
 const open = require('open')
+const chalk = require('chalk')
+
+const {times} = require('./configs.json')
+
+console.log(chalk.hex('#90a906')('--------------------------------------------------------------------'))
+console.log(`${chalk.hex('#90a906')('----------------------------')} ${chalk.bold.bgYellowBright.gray(' PDF TEST ')} ${chalk.hex('#90a906')('----------------------------')}`)
+console.log(chalk.hex('#90a906')('--------------------------------------------------------------------'))
 
 const checkToRun = dirPath => new Promise((resolve, reject) => {
   fs.stat(dirPath, (e, stats) => {
@@ -84,6 +91,7 @@ fs.readdir(__dirname, async (e, files) => {
     console.error(e)
     return
   }
+  const start = new Date()
   try {
     const results = []
     const tempDirPath = path.resolve(__dirname, '../temp')
@@ -98,7 +106,7 @@ fs.readdir(__dirname, async (e, files) => {
       if (filePath) {
         const {getResult} = require(filePath) 
         if (getResult) {
-          const result = await getResult() /* title, time */
+          const result = await getResult(times) /* title, time */
           if (result) results.push(result)
         }
       }
@@ -108,4 +116,8 @@ fs.readdir(__dirname, async (e, files) => {
   } catch (e) {
     console.error(e)
   }
+  const end = new Date()
+  const time = end - start
+  console.log('')
+  console.log(`PDF Test Finished! Total: ${chalk.bold.redBright(time)}ms`)
 })
