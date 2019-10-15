@@ -29,7 +29,14 @@ const checkToRun = dirPath => new Promise((resolve, reject) => {
 const mkdir = dirPath => new Promise((resolve, reject) => {
   fs.mkdir(dirPath, e => {
     if (e) reject(e)
-    resolve()
+    else resolve()
+  })
+})
+
+const emptyDir = dirPath => new Promise((resolve, reject) => {
+  empty(dirPath, false, ({error, removed, failed}) => {
+    if (error) reject(error)
+    else resolve({removed, failed})
   })
 })
 
@@ -96,11 +103,8 @@ fs.readdir(__dirname, async (e, files) => {
   try {
     const results = []
     const tempDirPath = path.resolve(__dirname, '../temp')
-    if (!fs.existsSync(tempDirPath)) {
-      await mkdir(tempDirPath)
-    } else {
-      empty(path.join(__dirname, '../temp'), false, ({error}) => (console.error(error)))
-    }
+    if (!fs.existsSync(tempDirPath)) await mkdir(tempDirPath)
+    else await emptyDir(tempDirPath)
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
       const dirPath = path.resolve(__dirname, file)
@@ -115,7 +119,7 @@ fs.readdir(__dirname, async (e, files) => {
       }
     }
     const filePath = await buildReportHtml(results)
-    open(filePath)
+    await open(filePath)
   } catch (e) {
     console.error(e)
   }
