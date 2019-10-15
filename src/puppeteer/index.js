@@ -2,8 +2,9 @@ const path = require('path')
 const url = require('url')
 const puppeteer = require('puppeteer')
 const chalk = require('chalk')
-
 const ora = require('ora')
+
+const {multiTest} = require('../utils')
 
 const test = async num => {
   const spinner = ora()
@@ -55,28 +56,12 @@ const test = async num => {
 }
 
 const getResult = async times => {
-  let i = 0
-  let timeSums = 0
-  let succeedTimes = 0
-  let failTimes = 0
-  console.log('')
-  console.log(`· Test ${chalk.underline('Puppeteer')} Starting.`)
-  do {
-    try {
-      const singleTestTime = await test(++i)
-      timeSums += singleTestTime
-      succeedTimes++
-    } catch (e) {
-      console.error(e)
-      failTimes++
-    }
-  } while (i < times)
-  const time = Math.round(succeedTimes ? timeSums / succeedTimes : 0)
-  console.log(`· Test ${chalk.underline('Puppeteer')} Finished. Succeeded: ${chalk.red(succeedTimes)}, failed: ${chalk.red(failTimes)}.`)
-  return {
-    title: 'puppeteer',
-    time
-  }
+  const result = await multiTest({
+    times,
+    type: 'puppeteer',
+    fn: test
+  })
+  return result
 }
 
 module.exports = {

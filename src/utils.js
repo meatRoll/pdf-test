@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const empty = require('empty-folder')
+const chalk = require('chalk')
 
 const readDir = dirPath => new Promise((resolve, reject) => {
   fs.readdir(dirPath, (e, files) => {
@@ -93,11 +94,43 @@ const buildReportHtml = async results => {
   return filePath
 }
 
+const multiTest = async ({
+  times,
+  type,
+  fn
+}) => {
+  let i = 0
+  let timeSums = 0
+  let succeedTimes = 0
+  let failTimes = 0
+  type = type.toLowerCase()
+  const _type = `${type[0].toUpperCase()}${type.slice(1)}`
+  console.log('')
+  console.log(`· Test ${chalk.underline(_type)} Starting.`)
+  do {
+    try {
+      const singleTestTime = await fn(++i)
+      timeSums += singleTestTime
+      succeedTimes++
+    } catch (e) {
+      console.error(e)
+      failTimes++
+    }
+  } while (i < times)
+  const time = Math.round(succeedTimes ? timeSums / succeedTimes : 0)
+  console.log(`· Test ${chalk.underline(_type)} Finished. Succeeded: ${chalk.red(succeedTimes)}, failed: ${chalk.red(failTimes)}.`)
+  return {
+    title: type,
+    time
+  }
+}
+
 module.exports = {
   readDir,
   checkToRun,
   makeDir,
   emptyDir,
   writeFile,
-  buildReportHtml
+  buildReportHtml,
+  multiTest
 }
