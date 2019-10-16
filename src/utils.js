@@ -86,7 +86,7 @@ const buildReportHtml = async results => {
           <span class="key">${result.title}：</span>
           <span class="value">${result.time}ms</span>
         </div>
-      `)}
+      `).join('')}
     </body>
     </html>
   `
@@ -110,8 +110,12 @@ const multiTest = async ({
   do {
     try {
       const singleTestTime = await fn(++i)
-      timeSums += singleTestTime
-      succeedTimes++
+      if (singleTestTime) {
+        timeSums += singleTestTime
+        succeedTimes++
+      } else {
+        failTimes++
+      }
     } catch (e) {
       console.error(e)
       failTimes++
