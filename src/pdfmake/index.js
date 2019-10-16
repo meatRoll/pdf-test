@@ -8,7 +8,7 @@ const writeFile = (pdfPath, data) => new Promise(resolve => {
   fs.writeFile(pdfPath, buffer, 'binary', e => resolve())
 })
 
-const test = async num => {
+const test = async (num, contentLength) => {
   const browser = await puppeteer.launch({
     headless: true,
     ignoreDefaultArgs: [ '--disable-extensions' ]
@@ -20,6 +20,9 @@ const test = async num => {
       await page.goto(
         url.format({
           pathname: path.resolve(__dirname, 'web/index.html'),
+          query: {
+            contentLength
+          },
           protocol: 'file:',
           slashes: true
         })
