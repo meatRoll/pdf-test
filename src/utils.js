@@ -41,11 +41,10 @@ const emptyDir = dirPath => new Promise((resolve, reject) => {
   })
 })
 
-const writeFile = content => new Promise(async (resolve, reject) => {
-  const filePath = path.resolve(__dirname, '../temp/report.html')
+const writeFile = (filePath, content) => new Promise(async (resolve, reject) => {
   fs.writeFile(filePath, content, e => {
     if (e) reject(e)
-    resolve(filePath)
+    else resolve()
   })
 })
 
@@ -91,12 +90,14 @@ const buildReportHtml = async results => {
     </body>
     </html>
   `
-  const filePath = await writeFile(html)
+  const filePath = path.resolve(__dirname, '../temp/report.html')
+  await writeFile(filePath, html)
   return filePath
 }
 
 const multiTest = async ({
   times,
+  contentLength,
   type,
   fn
 }) => {
@@ -118,7 +119,7 @@ const multiTest = async ({
     i++
     try {
       spinner.start(`Testing Times: ${i}...`)
-      const singleTestTime = await fn(i)
+      const singleTestTime = await fn(i, contentLength)
       if (singleTestTime === undefined) {
         const error = Error('The Testing Function Can\'t Return Undefined.')
         errorHandler(error, spinner, i)
@@ -132,7 +133,7 @@ const multiTest = async ({
     }
   } while (i < times)
   const time = Math.round(succeedTimes ? timeSums / succeedTimes : 0)
-  console.log(`· Test ${chalk.underline(_type)} Finished. Succeeded: ${chalk.red(succeedTimes)}, failed: ${chalk.red(failTimes)}.`)
+  console.log(`· Test ${chalk.underline(_type)} Finished. Succeeded: ${chalk.red(succeedTimes)}, Failed: ${chalk.red(failTimes)}.`)
   return {
     title: type,
     time
@@ -145,5 +146,6 @@ module.exports = {
   makeDir,
   emptyDir,
   buildReportHtml,
+  writeFile,
   multiTest
 }
