@@ -1,1 +1,1 @@
-Test the speed of generating pdf by using several pdf-generating libraries(puppeteer, wkhtmltopdf, html2pdf, pdfmake, etc.).
+Test the speed of generating pdf by using several pdf-generating libraries(puppeteer, wkhtmltopdf, html2pdf.js, pdfmake, etc.).
