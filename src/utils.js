@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const empty = require('empty-folder')
 const chalk = require('chalk')
+const ora = require('ora')
 
 const readDir = dirPath => new Promise((resolve, reject) => {
   fs.readdir(dirPath, (e, files) => {
@@ -103,22 +104,31 @@ const multiTest = async ({
   let timeSums = 0
   let succeedTimes = 0
   let failTimes = 0
+  const errorHandler = (e, spinner, num) => {
+    spinner.fail(`Testing Times: ${num} Error.`)
+    console.error(e)
+    failTimes++
+  }
   type = type.toLowerCase()
   const _type = `${type[0].toUpperCase()}${type.slice(1)}`
   console.log('')
   console.log(`· Test ${chalk.underline(_type)} Starting.`)
   do {
+    const spinner = ora()
+    i++
     try {
-      const singleTestTime = await fn(++i)
-      if (singleTestTime) {
+      spinner.start(`Testing Times: ${i}...`)
+      const singleTestTime = await fn(i)
+      if (singleTestTime === undefined) {
+        const error = Error('The Testing Function Can\'t Return Undefined.')
+        errorHandler(error, spinner, i)
+      } else {
+        spinner.succeed(`Testing Times: ${i} End. Duration: ${chalk.red(singleTestTime)}ms`)
         timeSums += singleTestTime
         succeedTimes++
-      } else {
-        failTimes++
       }
     } catch (e) {
-      console.error(e)
-      failTimes++
+      errorHandler(e, spinner, i)
     }
   } while (i < times)
   const time = Math.round(succeedTimes ? timeSums / succeedTimes : 0)
@@ -134,7 +144,6 @@ module.exports = {
   checkToRun,
   makeDir,
   emptyDir,
-  writeFile,
   buildReportHtml,
   multiTest
 }
