@@ -24,7 +24,7 @@ const test = async num => {
           slashes: true
         })
       )
-      // setTimeout(() => reject(Error('Time out')), 10000)
+      setTimeout(() => reject(Error('Time out')), 10000)
     })
     const {time, data} = await waitForClose()
     const pdfPath = path.resolve(__dirname, `../../temp/pdfmake-${num}.pdf`)
