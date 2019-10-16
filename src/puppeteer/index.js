@@ -55,15 +55,6 @@ const test = async num => {
   }
 }
 
-const getResult = async times => {
-  const result = await multiTest({
-    times,
-    type: 'puppeteer',
-    fn: test
-  })
-  return result
-}
-
 module.exports = {
-  getResult
+  test
 }

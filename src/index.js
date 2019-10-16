@@ -3,7 +3,7 @@ const path = require('path')
 const open = require('open')
 const chalk = require('chalk')
 
-const {readDir, checkToRun, makeDir, emptyDir, buildReportHtml} = require('./utils')
+const {readDir, checkToRun, makeDir, emptyDir, buildReportHtml, multiTest} = require('./utils')
 
 const {times} = require('./configs.json')
 
@@ -25,9 +25,13 @@ const run = async () => {
       const dirPath = path.resolve(__dirname, file)
       const filePath = await checkToRun(dirPath)
       if (filePath) {
-        const {getResult} = require(filePath) 
-        if (getResult) {
-          const result = await getResult(times) /* title, time */
+        const {test} = require(filePath) 
+        if (test) {
+          const result = await multiTest({
+            times,
+            type: file,
+            fn: test
+          }) /* title, time */
           if (result) results.push(result)
         }
       }
